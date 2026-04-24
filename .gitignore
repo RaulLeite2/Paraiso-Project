@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+database.json
+bebe_virtual.json
+panel_messages.json
+ticket_config.json
+ticket_state.json
+casamento_compatibilidade.json
