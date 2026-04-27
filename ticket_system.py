@@ -297,29 +297,32 @@ class TicketSelect(nextcord.ui.Select):
         )
 
     async def callback(self, interaction: nextcord.Interaction) -> None:
+        async def _reply(content: str) -> None:
+            if interaction.response.is_done():
+                await interaction.followup.send(content, ephemeral=True)
+            else:
+                await interaction.response.send_message(content, ephemeral=True)
+
+        # Acknowledge immediately to avoid 10062 (Unknown interaction)
+        # when thread creation or network calls take longer than 3 seconds.
+        if not interaction.response.is_done():
+            await interaction.response.defer(ephemeral=True)
+
         cfg = load_config()
         guild = interaction.guild
 
         if guild is None:
-            await interaction.response.send_message(
-                "Servidor não encontrado.", ephemeral=True
-            )
+            await _reply("Servidor não encontrado.")
             return
 
         parent = guild.get_channel(cfg["panel_channel_id"])
         if not isinstance(parent, nextcord.TextChannel):
-            await interaction.response.send_message(
-                "O canal configurado precisa ser um canal de texto.",
-                ephemeral=True,
-            )
+            await _reply("O canal configurado precisa ser um canal de texto.")
             return
 
         opener = interaction.user
         if not isinstance(opener, nextcord.Member):
-            await interaction.response.send_message(
-                "Não consegui identificar seu membro.",
-                ephemeral=True,
-            )
+            await _reply("Não consegui identificar seu membro.")
             return
 
         thread_name = f"ticket-{opener.display_name}".lower().replace(" ", "-")[:90]
@@ -367,10 +370,7 @@ class TicketSelect(nextcord.ui.Select):
             content=f"[TICKET ABERTO] {opener} abriu {thread.mention} em {utcnow().strftime('%d/%m/%Y %H:%M:%S UTC')}",
         )
 
-        await interaction.response.send_message(
-            f"Seu ticket foi criado: {thread.mention}",
-            ephemeral=True,
-        )
+        await _reply(f"Seu ticket foi criado: {thread.mention}")
 
 
 class TicketPanelView(nextcord.ui.View):
