@@ -1,6 +1,5 @@
 """Cog: Sistema do bebê virtual (wrapper do BebeSistema)."""
 import logging
-import traceback
 
 from nextcord.ext import commands
 
@@ -26,8 +25,8 @@ class BebeCog(commands.Cog):
         try:
             registrar_views_bebe(self.bot, sistema)
             log.info("Views persistentes do bebê carregadas.")
-        except Exception as e:
-            log.error(f"Erro ao carregar views do bebê: {e}")
+        except Exception:
+            log.exception("Erro ao carregar views do bebê")
 
         try:
             if not sistema.loop_bebe.is_running():
@@ -35,9 +34,8 @@ class BebeCog(commands.Cog):
                 log.info("Loop do bebê iniciado.")
             else:
                 log.info("Loop do bebê já estava rodando.")
-        except Exception as e:
-            log.error(f"Erro ao iniciar loop do bebê: {e}")
-            log.error(traceback.format_exc())
+        except Exception:
+            log.exception("Erro ao iniciar loop do bebê")
 
             # Segunda tentativa com nova instância para evitar estado stale após reload.
             try:
@@ -45,9 +43,8 @@ class BebeCog(commands.Cog):
                 if not sistema.loop_bebe.is_running():
                     sistema.loop_bebe.start()
                     log.info("Loop do bebê iniciado na segunda tentativa.")
-            except Exception as retry_err:
-                log.error(f"Falha na segunda tentativa do loop do bebê: {retry_err}")
-                log.error(traceback.format_exc())
+            except Exception:
+                log.exception("Falha na segunda tentativa do loop do bebê")
 
         try:
             if not sistema.data.get("setup"):
@@ -56,8 +53,8 @@ class BebeCog(commands.Cog):
             else:
                 await sistema.atualizar_painel_principal()
                 log.info("Painel principal do bebê enviado/atualizado.")
-        except Exception as e:
-            log.error(f"Erro ao atualizar sistema do bebê: {e}")
+        except Exception:
+            log.exception("Erro ao atualizar sistema do bebê")
 
 
 def setup(bot: commands.Bot):
