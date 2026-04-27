@@ -33,6 +33,11 @@ ADICIONAIS = [
 # Alias legado para evitar NameError em referências antigas.
 bebe_sistema = None
 
+def _garantir_bebe_sistema_existe():
+    """Garante que bebe_sistema está acessível como global."""
+    global bebe_sistema
+    return bebe_sistema
+
 
 def usuario_eh_noivo(user_id: int) -> bool:
     return user_id == SEU_ID
@@ -487,7 +492,16 @@ class BabyAdminView(View):
 
 
 def registrar_views_bebe(bot, sistema):
+    """Registra todas as views persistentes do bebê no bot."""
     global bebe_sistema
+    if sistema is None:
+        raise ValueError("sistema não pode ser None em registrar_views_bebe()")
+    
     bebe_sistema = sistema
+    
+    # Registrar views com timeout=None (persistentes)
     bot.add_view(SetupBebeView(sistema))
     bot.add_view(PainelBebeView(sistema))
+    bot.add_view(BabyAdminView(sistema))
+    bot.add_view(AdicionaisBebeView(sistema))
+    bot.add_view(MomentosBebeView(sistema))
