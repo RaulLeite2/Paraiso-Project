@@ -31,14 +31,6 @@ NOIVA_ROLE_ID = 1491166441515257927
 BEBE_FILE = "bebe_virtual.json"
 MEMORIAS_DIR = "memorias_bebe"
 
-# Referência global do sistema bebê (será atribuída por registrar_views_bebe)
-bebe_sistema = None
-
-def _garantir_bebe_sistema_existe():
-    """Garante que bebe_sistema está acessível como global."""
-    global bebe_sistema
-    return bebe_sistema
-
 PRECO_ADICIONAIS = {
     "baba": 45,
     "brinquedo": 15,
