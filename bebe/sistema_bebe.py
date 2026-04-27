@@ -577,10 +577,18 @@ class BebeSistema:
         view = AdicionaisBebeView(self)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
+    async def abrir_painel_adicionais(self, interaction: nextcord.Interaction):
+        # Compatibilidade com views antigas que chamam o nome legado.
+        await self.abrir_adicionais(interaction)
+
     async def abrir_momentos(self, interaction: nextcord.Interaction):
         embed = embed_memoria_bebe()
         view = MomentosBebeView(self)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+
+    async def abrir_painel_momentos(self, interaction: nextcord.Interaction):
+        # Compatibilidade com views antigas que chamam o nome legado.
+        await self.abrir_momentos(interaction)
 
     def listar_memorias(self):
         if not os.path.exists(MEMORIAS_DIR):

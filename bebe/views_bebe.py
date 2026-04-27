@@ -30,6 +30,9 @@ ADICIONAIS = [
     ("Música de ninar", "musica_ninar", "Sono"),
 ]
 
+# Alias legado para evitar NameError em referências antigas.
+bebe_sistema = None
+
 
 def usuario_eh_noivo(user_id: int) -> bool:
     return user_id == SEU_ID
@@ -484,5 +487,7 @@ class BabyAdminView(View):
 
 
 def registrar_views_bebe(bot, sistema):
+    global bebe_sistema
+    bebe_sistema = sistema
     bot.add_view(SetupBebeView(sistema))
     bot.add_view(PainelBebeView(sistema))
