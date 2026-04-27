@@ -30,6 +30,7 @@ NOIVO_ROLE_ID = 1491166369859764314
 NOIVA_ROLE_ID = 1491166441515257927
 BEBE_FILE = "bebe_virtual.json"
 MEMORIAS_DIR = "memorias_bebe"
+bebe_sistema = None
 
 PRECO_ADICIONAIS = {
     "baba": 45,
@@ -697,8 +698,9 @@ class BebeSistema:
         await self.bot.wait_until_ready()
 
 
-async def setup_bebe(bot, bebe_sistema: BebeSistema | None = None):
-    sistema = bebe_sistema or BebeSistema(bot)
-    sistema.iniciar_loops()
+async def setup_bebe(bot, sistema_instancia: BebeSistema | None = None):
+    sistema = sistema_instancia if sistema_instancia is not None else BebeSistema(bot)
+    if not sistema.loop_bebe.is_running():
+        sistema.loop_bebe.start()
     await sistema.atualizar_setup()
     return sistema

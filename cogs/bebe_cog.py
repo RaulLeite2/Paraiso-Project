@@ -1,5 +1,6 @@
 """Cog: Sistema do bebê virtual (wrapper do BebeSistema)."""
 import logging
+import traceback
 
 from nextcord.ext import commands
 
@@ -13,17 +14,14 @@ class BebeCog(commands.Cog):
         self.bot = bot
         self.bebe_sistema = BebeSistema(bot)
 
-    def _get_sistema(self) -> BebeSistema:
-        # Garante instância válida mesmo após reload parcial da cog.
-        sistema = getattr(self, "bebe_sistema", None)
-        if sistema is None:
-            sistema = BebeSistema(self.bot)
-            self.bebe_sistema = sistema
-        return sistema
+    def _build_fresh_sistema(self) -> BebeSistema:
+        # Evita manter instância antiga após reload parcial de extensão.
+        self.bebe_sistema = BebeSistema(self.bot)
+        return self.bebe_sistema
 
     @commands.Cog.listener()
     async def on_ready(self):
-        sistema = self._get_sistema()
+        sistema = self._build_fresh_sistema()
 
         try:
             registrar_views_bebe(self.bot, sistema)
@@ -33,12 +31,23 @@ class BebeCog(commands.Cog):
 
         try:
             if not sistema.loop_bebe.is_running():
-                sistema.iniciar_loops()
+                sistema.loop_bebe.start()
                 log.info("Loop do bebê iniciado.")
             else:
                 log.info("Loop do bebê já estava rodando.")
         except Exception as e:
             log.error(f"Erro ao iniciar loop do bebê: {e}")
+            log.error(traceback.format_exc())
+
+            # Segunda tentativa com nova instância para evitar estado stale após reload.
+            try:
+                sistema = self._build_fresh_sistema()
+                if not sistema.loop_bebe.is_running():
+                    sistema.loop_bebe.start()
+                    log.info("Loop do bebê iniciado na segunda tentativa.")
+            except Exception as retry_err:
+                log.error(f"Falha na segunda tentativa do loop do bebê: {retry_err}")
+                log.error(traceback.format_exc())
 
         try:
             if not sistema.data.get("setup"):
