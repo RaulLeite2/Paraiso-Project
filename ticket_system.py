@@ -12,13 +12,13 @@ NOIVA_ROLE_ID = 1491166441515257927
 DEFAULT_LOG_CHANNEL_ID = 1491930461750952108
 DEFAULT_REPORT_CHANNEL_ID = 1491172827527778304
 
-FIXED_PANEL_TITLE = "Report Love"
+FIXED_PANEL_TITLE = "<:tell:1493022801362423931> Report Love"
 FIXED_PANEL_DESCRIPTION = (
     "Espaço para ajustes na nossa convivência. O diálogo é a nossa base. "
     "Regras rápidas: Respeito acima de tudo. O que é dito aqui, morre aqui. "
     "Se for urgente, priorize a call. Clique no botão abaixo para abrir um espaço de conversa."
 )
-FIXED_TICKET_ICON = ":tell:"
+FIXED_TICKET_ICON = "<:tell:1493022801362423931>"
 FIXED_SELECT_PLACEHOLDER = "Escolha uma opção"
 
 CONFIG_FILE = "ticket_config.json"
